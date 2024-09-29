@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset = "UTF-8">
+	<meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+	<title>스플래툰 아이돌 노래 월드컵</title>
+	<style>
+		@font-face {
+			font-family: 'SplatoonKFont';
+			src: url('src/SplatoonK.ttf') format('truetype');
+			font-weight: normal;
+			font-style: normal;
+		}
+
+		body {
+			font-family: 'SplatoonKFont', sans-serif;
+			background-color: linen;
+			text-align: center;
+		}
+
+		.match {
+			margin: 20px;
+		}
+
+		.song-image {
+			width: 150px;
+			cursor: pointer;
+			margin: 10px;
+			transition: transform 0.2s ease-in-out;
+		}
+
+		.song-image:hover {
+			transform: scale(1.1);
+		}
+
+		#winner {
+			font-size: 2em;
+			margin-top: 40px;
+			transform: scale(1.5);
+			transform-origin: top left;
+		}
+
+		#results {
+			margin-top: 20px;
+		}
+	</style>
+</head>
+<body>
+	<h1>스플래툰 아이돌 노래 월드컵</h1>
+	<div id="match-container" class="match"></div>
+	<div id="winner" style="display: none;"></div>
+	<div id="results"></div>
+
+	<script>
+
+		let currentRound = 0;
+		let nextRoundSongs = [];
+		let currentMatch = 0;
+
+		const songs = [
+			{title: "#47 onward", image: "1.jpg", mp3: "#47 onward.mp3"},
+			{title: "Acid Hues", image: "2.jpg", mp3: "Acid Hues.mp3"},
+			{title: "Anarchy Rainbow", image: "3.jpg", mp3: "Anarchy Rainbow.mp3"},
+			{title: "Anarchy Splatcast", image: "4.jpg", mp3: "Anarchy Splatcast.mp3"},
+			{title: "Big Betrayal", image: "5.jpg", mp3: "Big Betrayal.mp3"},
+			{title: "Bomb Rush Blush", image: "6.jpg", mp3: "Bomb Rush Blush.mp3"},
+			{title: "Candy-Coated Rocks", image: "7.jpg", mp3: "Candy-Coated Rocks.mp3"},
+			{title: "City of Color", image: "8.jpg", mp3: "City of Color.mp3"}
+		];
+
+		function startTournament() {
+			shuffle(songs);
+
+			currentRoundSongs = [...songs];
+			nextRoundSongs = [];
+			currentMatch = 0;
+
+			displayMatch();
+		}
+
+		function displayMatch() {
+			const matchContainer = document.getElementById('match-container');
+			matchContainer.innerHTML = '';
+
+			if (currentMatch < currentRoundSongs.length / 2) {
+				const song1 = currentRoundSongs[currentMatch * 2];
+				const song2 = currentRoundSongs[currentMatch * 2 + 1];
+
+				const songDiv1 = createSongDiv(song1);
+				matchContainer.appendChild(songDiv1);
+
+				const songDiv2 = createSongDiv(song2);
+				matchContainer.appendChild(songDiv2);
+			} else {
+				if (nextRoundSongs.length > 1) {
+					currentRoundSongs = nextRoundSongs;
+					nextRoundSongs = [];
+					currentMatch = 0;
+					displayMatch();
+				} else {
+					declareWinner();
+				}
+			}
+		}
+
+		function createSongDiv(song) {
+			const songDiv = document.createElement('div');
+			songDiv.className = 'match';
+			songDiv.innerHTML = `<img src="src/jpg/${song.image}" alt="${song.title} image" class="song-image"> <h3>${song.title}</h3>`;
+
+			const audioElement = document.createElement('audio');
+			audioElement.src = `src/mp3/${song.mp3}`;
+			audioElement.controls = true;
+			songDiv.appendChild(audioElement);
+
+			songDiv.addEventListener('click', () => {
+				nextRoundSongs.push(song);
+				currentMatch++;
+				displayMatch();
+			});
+
+			return songDiv;
+		}
+
+		function declareWinner() {
+			const winnerDiv = document.getElementById('winner');
+			const winner = nextRoundSongs[0];
+
+			winnerDiv.style.display = 'block';
+			winnerDiv.innerHTML = `
+				<div class="match">
+					<img src="src/jpg/${winner.image}" alt="${winner.title} image" class="song-image" style="width: 150px;">
+					<h3>${winner.title}</h3>
+					<audio src="src/mp3/${winner.mp3}" controls></audio>
+				</div>
+			`;
+		}
+
+		function shuffle(array) {
+			for (let i = array.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[array[i], array[j]] = [array[j], array[i]];
+			}
+		}
+
+		startTournament();
+	</script>
+</body>
+</html>
