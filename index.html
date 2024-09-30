@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset = "UTF-8">
+	<meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+	<title>스플래툰 아이돌 노래 월드컵</title>
+	<style>
+		@font-face {
+			font-family: 'Splatoon2KFont';
+			src: url('src/Splatoon2K.ttf') format('truetype');
+			font-weight: normal;
+			font-style: normal;
+		}
+
+		body {
+			font-family: 'Splatoon2KFont', sans-serif;
+			background-color: linen;
+			text-align: center;
+
+		}
+
+		h1 {
+			font-size: 5vh;
+			color: #282828;
+		}
+
+		h3 {
+			font-size: 3vh;
+			color: #282828;
+		}
+
+		#match-info {
+			font-size: 3vh;
+			margin:20px;
+			color: #282828;
+		}
+
+		#matches {
+			display: flex;
+			justify-content: center;
+		}
+
+		.match {
+			margin: 1vh;
+		}
+
+		.song-image {
+			height: 30vh;
+			cursor: pointer;
+			margin: 1vh;
+			transition: transform 0.2s ease-in-out;
+		}
+
+		.song-image:hover {
+			transform: scale(1.05);
+		}
+
+		#winner {
+			margin-top: 2vh;
+		}
+
+		.round {
+			font-size: 1.5em;
+			margin-top: 3vh;
+		}
+
+		.off_the_hook {
+			color: #FF3CBB;
+		}
+
+		.squid_sisters {
+			color: #FF8200;
+		}
+
+		.deep_cut {
+			color: #0000CD;
+		}
+
+		.together {
+			color: #FF3232;
+		}
+
+	</style>
+</head>
+<body>
+	<h1>스플래툰 아이돌 노래 월드컵</h1>
+	<div id = "match-info"></div>
+	<div id = "matches">
+		<div class = "match"></div>
+		<div class = "match"></div>
+	</div>
+	<div id="winner" style="display: none;"></div>
+	<div id="results"></div>
+
+	<script>
+
+		let nextRoundSongs = [];
+		let currentMatch = 0;
+		let roundHistory = [];
+
+		const songs = [
+			{title: "#47 onward", image: "1.jpg", mp3: "47 onward.mp3", idol: "off_the_hook"},
+			{title: "Acid Hues", image: "2.jpg", mp3: "Acid Hues.mp3", idol: "off_the_hook"},
+			{title: "Anarchy Rainbow", image: "3.png", mp3: "Anarchy Rainbow.mp3", idol: "deep_cut"},
+			{title: "Anarchy Splatcast", image: "4.png", mp3: "Anarchy Splatcast.mp3", idol: "deep_cut"},
+			{title: "Big Betrayal", image: "5.jpg", mp3: "Big Betrayal.mp3", idol: "deep_cut"},
+			{title: "Bomb Rush Blush", image: "6.png", mp3: "Bomb Rush Blush.mp3", idol: "squid_sisters"},
+			{title: "Candy-Coated Rocks", image: "7.jpg", mp3: "Candy-Coated Rocks.mp3", idol: "off_the_hook"},
+			{title: "City of Color", image: "8.jpg", mp3: "City of Color.mp3", idol: "squid_sisters"},
+			{title: "Color Pulse", image: "9.jpg", mp3: "Color Pulse.mp3", idol: "off_the_hook"},
+			{title: "Daybreaker Anthem", image: "10.jpg", mp3: "Daybreaker Anthem.mp3", idol: "deep_cut"},
+			{title: "Ebb & Flow", image: "11.jpg", mp3: "Ebb & Flow.mp3", idol: "off_the_hook"},
+			{title: "Fest Zest", image: "12.jpg", mp3: "Fest Zest.mp3", idol: "off_the_hook"},
+			{title: "Fins in the Air", image: "13.jpg", mp3: "Fins in the Air.mp3", idol: "deep_cut"},
+			{title: "Fly Octo Fly ~ Ebb & Flow", image: "14.jpg", mp3: "Fly Octo Fly ~ Ebb and Flow.mp3", idol: "off_the_hook"},
+			{title: "Hide & Sleek", image: "15.jpg", mp3: "Hide & Sleek.mp3", idol: "deep_cut"},
+			{title: "Ink Me Up", image: "16.jpg", mp3: "Ink Me Up.mp3", idol: "squid_sisters"},
+			{title: "Inkopolis News - Off the hook", image: "17.png", mp3: "Inkopolis News - Off the hook.mp3", idol: "off_the_hook"},
+			{title: "Inkopolis News - Squid sisters", image: "18.png", mp3: "Inkopolis News - Squid sisters.mp3", idol: "squid_sisters"},
+			{title: "Into the Light", image: "19.jpg", mp3: "Into the Light.mp3", idol: "off_the_hook"},
+			{title: "Liquid Sunshine", image: "20.png", mp3: "Liquid Sunshine.mp3", idol: "squid_sisters"},
+			{title: "Maritime Memory", image: "21.jpg", mp3: "Maritime Memory.mp3", idol: "squid_sisters"},
+			{title: "Muck Warfare", image: "22.jpg", mp3: "Muck Warfare.mp3", idol: "off_the_hook"},
+			{title: "Nasty Majesty", image: "23.png", mp3: "Nasty Majesty.mp3", idol: "off_the_hook"},
+			{title: "Rainbow Color Inkanation", image: "24.jpg", mp3: "Rainbow Color Inkantation.mp3", idol: "together"},
+			{title: "Smeared Canvas", image: "25.jpg", mp3: "Smeared Canvas.mp3", idol: "deep_cut"},
+			{title: "Spicy Calamari Inkantation", image: "26.png", mp3: "Spicy Calamari Inkantation.mp3", idol: "squid_sisters"},
+			{title: "Three Wishes", image: "27.jpg", mp3: "Three Wishes.mp3", idol: "together"},
+			{title: "Tide Goes Out", image: "28.webp", mp3: "Tide Goes Out.mp3", idol: "squid_sisters"},
+			{title: "Til Depth Do We Part", image: "29.jpg", mp3: "Til Depth Do We Part.mp3", idol: "deep_cut"},
+			{title: "Tomorrow's Nostalgia Today", image: "30.png", mp3: "Tomorrow's Nostalgia Today.mp3", idol: "squid_sisters"},
+			{title: "Wave Goodbye", image: "31.png", mp3: "Wave Goodbye.mp3", idol: "squid_sisters"},
+			{title: "We're So Back", image: "32.jpg", mp3: "We're So Back.mp3", idol: "off_the_hook"}
+		];
+
+		function startTournament() {
+			shuffle(songs);
+
+			currentRoundSongs = [...songs];
+			nextRoundSongs = [];
+			currentMatch = 0;
+
+			roundHistory = [];
+
+			displayMatch();
+		}
+
+		function displayMatch() {
+			const matchContainer = document.querySelectorAll('.match');
+			matchContainer.forEach(container => container.innerHTML = '');
+
+			if (currentMatch < currentRoundSongs.length / 2) {
+
+				const matchInfoDiv = document.getElementById('match-info');
+				matchInfoDiv.textContent = `${currentRoundSongs.length}강 (${currentMatch + 1} / ${currentRoundSongs.length / 2})`
+
+				const song1 = currentRoundSongs[currentMatch * 2];
+				const song2 = currentRoundSongs[currentMatch * 2 + 1];
+
+				const songDiv1 = createSongDiv(song1);
+				const songDiv2 = createSongDiv(song2);
+
+				matchContainer[0].appendChild(songDiv1);
+				matchContainer[1].appendChild(songDiv2);
+			} else {
+				if (nextRoundSongs.length > 1) {
+
+					roundHistory.push([...currentRoundSongs]);
+
+					currentRoundSongs = nextRoundSongs;
+					nextRoundSongs = [];
+					currentMatch = 0;
+					displayMatch();
+				} else {
+					const matchInfoDiv = document.getElementById('match-info');
+					matchInfoDiv.innerHTML = 
+					`님은 <span class = "${nextRoundSongs[0].idol}"> 
+					${nextRoundSongs[0].title}
+					</span> 악개입니다`
+					declareWinner();
+				}
+			}
+		}
+
+		function createSongDiv(song) {
+			const songDiv = document.createElement('div');
+
+			const imgElement = document.createElement('img');
+			imgElement.src = `src/jpg/${song.image}`;
+			imgElement.alt = `${song.title} image`;
+			imgElement.className = 'song-image';
+
+			const titleElement = document.createElement('h3');
+			titleElement.textContent = song.title;
+			titleElement.classList.add(song.idol);
+
+			const audioElement = document.createElement('audio');
+			audioElement.src = `src/mp3/${song.mp3}`;
+			audioElement.controls = true;
+
+			songDiv.appendChild(audioElement);
+			songDiv.appendChild(titleElement);
+			songDiv.appendChild(imgElement);
+
+			imgElement.addEventListener('click', () => {
+				nextRoundSongs.push(song);
+				currentMatch++;
+				displayMatch();
+			});
+
+			return songDiv;
+		}
+
+		function declareWinner() {
+			const winnerDiv = document.getElementById('winner');
+			const winner = nextRoundSongs[0];
+
+			winnerDiv.style.display = 'block';
+			winnerDiv.innerHTML = `
+				<div class="match">
+					<img src="src/jpg/${winner.image}" alt="${winner.title} image" class="song-image" style="height: 500px"> <p>
+					<audio src="src/mp3/${winner.mp3}" controls></audio> </p>
+				</div>
+			`;
+
+			const resultsDiv = document.getElementById('results');
+			resultsDiv.innerHTML = '';
+
+			roundHistory.forEach((round, roundIndex) => {
+				const roundDiv = document.createElement('div');
+				roundDiv.innerHTML = `<h3><p>${round.length}강</p></h3>`;
+
+				round.forEach((song, index) => {
+					if(index % 2 == 0) {
+						const matchPair = document.createElement('div');
+						matchPair.innerHTML = 
+							`<div class="round"><p>
+							<span class = "${round[index].idol}"> 
+							${round[index].title} 
+							</span> vs <span class = "${round[index + 1].idol}"> 
+							${round[index + 1]?.title} </span>
+							</p></div>`;
+						roundDiv.appendChild(matchPair);
+					}
+				});
+
+				resultsDiv.appendChild(roundDiv);
+
+			});
+		}
+
+
+		function shuffle(array) {
+			for (let i = array.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[array[i], array[j]] = [array[j], array[i]];
+			}
+		}
+
+		startTournament();
+	</script>
+</body>
+</html>
