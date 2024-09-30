@@ -45,7 +45,8 @@
 		}
 
 		.song-image {
-			height: 30vh;
+			max-width: 25vw;
+			max-height: 25vh;
 			cursor: pointer;
 			margin: 1vh;
 			transition: transform 0.2s ease-in-out;
@@ -218,7 +219,7 @@
 			winnerDiv.style.display = 'block';
 			winnerDiv.innerHTML = `
 				<div class="match">
-					<img src="src/jpg/${winner.image}" alt="${winner.title} image" class="song-image" style="height: 500px"> <p>
+					<img src="src/jpg/${winner.image}" alt="${winner.title} image" style="height: 500px"> <p>
 					<audio src="src/mp3/${winner.mp3}" controls></audio> </p>
 				</div>
 			`;
