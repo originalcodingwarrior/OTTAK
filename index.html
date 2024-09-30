@@ -45,8 +45,8 @@
 		}
 
 		.song-image {
-			max-width: 25vw;
-			max-height: 25vh;
+			max-width: 40vw;
+			max-height: 40vh;
 			cursor: pointer;
 			margin: 1vh;
 			transition: transform 0.2s ease-in-out;
@@ -198,6 +198,9 @@
 			const audioElement = document.createElement('audio');
 			audioElement.src = `src/mp3/${song.mp3}`;
 			audioElement.controls = true;
+
+			audioElement.style.maxWidth = '250px';
+
 
 			songDiv.appendChild(audioElement);
 			songDiv.appendChild(titleElement);
