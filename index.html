@@ -163,22 +163,26 @@
 
 				matchContainer[0].appendChild(songDiv1);
 				matchContainer[1].appendChild(songDiv2);
-			} else {
-				if (nextRoundSongs.length > 1) {
+			} 
+			else {
+				roundHistory.push([...currentRoundSongs]);
 
-					roundHistory.push([...currentRoundSongs]);
+				if (nextRoundSongs.length > 1) {
 
 					currentRoundSongs = nextRoundSongs;
 					nextRoundSongs = [];
 					currentMatch = 0;
 					displayMatch();
+
 				} else {
+
 					const matchInfoDiv = document.getElementById('match-info');
 					matchInfoDiv.innerHTML = 
 					`님은 <span class = "${nextRoundSongs[0].idol}"> 
 					${nextRoundSongs[0].title}
 					</span> 악개입니다`
-					declareWinner();
+					showResult();
+
 				}
 			}
 		}
@@ -215,15 +219,15 @@
 			return songDiv;
 		}
 
-		function declareWinner() {
+		function showResult() {
 			const winnerDiv = document.getElementById('winner');
 			const winner = nextRoundSongs[0];
 
 			winnerDiv.style.display = 'block';
 			winnerDiv.innerHTML = `
 				<div class="match">
-					<img src="src/jpg/${winner.image}" alt="${winner.title} image" style="height: 500px"> <p>
-					<audio src="src/mp3/${winner.mp3}" controls></audio> </p>
+					<img src="src/jpg/${winner.image}" alt="${winner.title} image" style="height: 500px"> <br>
+					<audio src="src/mp3/${winner.mp3}" controls></audio>
 				</div>
 			`;
 
@@ -232,18 +236,18 @@
 
 			roundHistory.forEach((round, roundIndex) => {
 				const roundDiv = document.createElement('div');
-				roundDiv.innerHTML = `<h3><p>${round.length}강</p></h3>`;
+				roundDiv.innerHTML = `<h3>${round.length}강<br></h3>`;
 
 				round.forEach((song, index) => {
 					if(index % 2 == 0) {
 						const matchPair = document.createElement('div');
 						matchPair.innerHTML = 
-							`<div class="round"><p>
+							`<div class="round">
 							<span class = "${round[index].idol}"> 
 							${round[index].title} 
 							</span> vs <span class = "${round[index + 1].idol}"> 
 							${round[index + 1]?.title} </span>
-							</p></div>`;
+							<br></div>`;
 						roundDiv.appendChild(matchPair);
 					}
 				});
